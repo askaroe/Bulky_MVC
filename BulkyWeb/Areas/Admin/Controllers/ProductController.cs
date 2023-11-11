@@ -45,9 +45,9 @@ namespace BulkyWeb.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id);
+            Product? productFromDb = _unitOfWork.Product.Get(u => u.Id == id);
 
-            if (categoryFromDb == null)
+            if (productFromDb == null)
             {
                 return NotFound();
             }
@@ -55,12 +55,12 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Category obj) {
+        public IActionResult Edit(Product obj) {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(obj);
+                _unitOfWork.Product.Update(obj);
                 _unitOfWork.Save();
-                TempData["success"] = "Category updated successfully";
+                TempData["success"] = "Product updated successfully";
                 return RedirectToAction("Index");
             }
             return View();
@@ -72,9 +72,9 @@ namespace BulkyWeb.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id);
+            Product? productFromDb = _unitOfWork.Product.Get(u => u.Id == id);
 
-            if (categoryFromDb == null)
+            if (productFromDb == null)
             {
                 return NotFound();
             }
@@ -84,12 +84,12 @@ namespace BulkyWeb.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePOST(int? id)
         {
-            Category? obj = _unitOfWork.Category.Get(u => u.Id == id);
+            Product? obj = _unitOfWork.Product.Get(u => u.Id == id);
             if (obj == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Category.Remove(obj);
+            _unitOfWork.Product.Remove(obj);
             _unitOfWork.Save();
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
