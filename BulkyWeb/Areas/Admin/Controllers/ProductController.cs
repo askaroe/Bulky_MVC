@@ -1,5 +1,6 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Bulky.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -22,31 +23,42 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category
-                .GetAll().Select(u => new SelectListItem
+            ProductVM productVM = new()
+            {
+                CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
-                });
-            ViewBag.CategoryList = CategoryList;
-            return View();
+                }),
+                Product = new Product()
+            };
+            return View(productVM);
         }
 
         [HttpPost]
-        public IActionResult Create(Product obj) {
-            if (obj.Title == obj.ISBN)
+        public IActionResult Create(ProductVM productVM) {
+            if (productVM.Product.Title == productVM.Product.ISBN)
             {
                 ModelState.AddModelError("name", "the ISBN cannot exactly match the name.");
             }
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(obj);
+                _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Save();
                 TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
-            return View();
+            else
+            {
+                productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+            }
+                return View(productVM);
         }
+        
 
         public IActionResult Edit(int? id)
         {
