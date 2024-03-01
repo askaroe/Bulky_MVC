@@ -31,7 +31,7 @@ namespace Bulky.DataAccess.Repository
 
         public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> query
+            IQueryable<T> query;
             if (tracked)
             {
                 query = dbSet;
