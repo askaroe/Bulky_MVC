@@ -10,9 +10,9 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using Bulky.DataAccess.Repository.IRepository;
-using Bulky.Models;
-using Bulky.Utility;
+using BulkyBook.DataAccess.Repository.IRepository;
+using BulkyBook.Models;
+using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -23,9 +23,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
 
-namespace BulkyWeb.Areas.Identity.Pages.Account
+namespace BulkyBookWeb.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
@@ -40,21 +39,21 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager,
             IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
+            _roleManager=roleManager;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _roleManager = roleManager;
-            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -110,12 +109,13 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
+
             public string? Role { get; set; }
             [ValidateNever]
             public IEnumerable<SelectListItem> RoleList { get; set; }
 
             [Required]
-            public string? Name { get; set; }
+            public string Name { get; set; }
             public string? StreetAdress { get; set; }
             public string? City { get; set; }
             public string? State { get; set; }
@@ -124,28 +124,25 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
             public int? CompanyId { get; set; }
             [ValidateNever]
             public IEnumerable<SelectListItem> CompanyList { get; set; }
+
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (!_roleManager.RoleExistsAsync(SD.Role_Customer).GetAwaiter().GetResult())
-            {
+            if (!_roleManager.RoleExistsAsync(SD.Role_Customer).GetAwaiter().GetResult()) {
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Company)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(SD.Role_Company)).GetAwaiter().GetResult();
             }
 
-            Input = new()
-            {
-                RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
-                {
+            Input = new() {
+                RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem {
                     Text = i,
                     Value = i
                 }),
-                CompanyList = _unitOfWork.Company.GetAll().Select(i => new SelectListItem
-                { 
+                CompanyList = _unitOfWork.Company.GetAll().Select(i => new SelectListItem {
                     Text = i.Name,
                     Value = i.Id.ToString()
                 })
@@ -162,7 +159,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
+                
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 user.StreetAdress = Input.StreetAdress;
@@ -172,22 +169,19 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                 user.PostalCode = Input.PostalCode;
                 user.PhoneNumber = Input.PhoneNumber;
 
-                if(Input.Role == SD.Role_Company)
-                {
-                    user.CompanyId = Input.CompanyId;
+                if (Input.Role == SD.Role_Company) {
+                    user.CompanyId=Input.CompanyId;
                 }
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
-                if (result.Succeeded)
-                {
+                if (result.Succeeded) {
                     _logger.LogInformation("User created a new account with password.");
 
-                    if (!string.IsNullOrEmpty(Input.Role))
-                    {
+                    if (!String.IsNullOrEmpty(Input.Role)) {
                         await _userManager.AddToRoleAsync(user, Input.Role);
                     }
-                    else
-                    {
+                    else {
                         await _userManager.AddToRoleAsync(user, SD.Role_Customer);
                     }
 

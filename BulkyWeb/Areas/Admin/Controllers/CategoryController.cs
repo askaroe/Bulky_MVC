@@ -1,11 +1,11 @@
-﻿using Bulky.DataAccess.Data;
-using Bulky.DataAccess.Repository.IRepository;
-using Bulky.Models;
-using Bulky.Utility;
+﻿using BulkyBook.DataAccess.Repository.IRepository;
+using BulkyBook.DataAcess.Data;
+using BulkyBook.Models;
+using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulkyWeb.Areas.Admin.Controllers
+namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
     //[Authorize(Roles = SD.Role_Admin)]
@@ -18,7 +18,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Category> objCategoryList = _unitOfWork.Category.GetAll().ToList(); // retrieving data
+            List<Category> objCategoryList = _unitOfWork.Category.GetAll().ToList();
             return View(objCategoryList);
         }
 
@@ -26,14 +26,14 @@ namespace BulkyWeb.Areas.Admin.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public IActionResult Create(Category obj)
         {
             if (obj.Name == obj.DisplayOrder.ToString())
             {
-                ModelState.AddModelError("name", "the DisplayOrder cannot exactly match the name.");
+                ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the Name.");
             }
+
             if (ModelState.IsValid)
             {
                 _unitOfWork.Category.Add(obj);
@@ -42,6 +42,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
             return View();
+
         }
 
         public IActionResult Edit(int? id)
@@ -51,14 +52,15 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 return NotFound();
             }
             Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id);
+            //Category? categoryFromDb1 = _db.Categories.FirstOrDefault(u=>u.Id==id);
+            //Category? categoryFromDb2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault();
 
             if (categoryFromDb == null)
             {
                 return NotFound();
             }
-            return View();
+            return View(categoryFromDb);
         }
-
         [HttpPost]
         public IActionResult Edit(Category obj)
         {
@@ -70,6 +72,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
             return View();
+
         }
 
         public IActionResult Delete(int? id)
@@ -84,9 +87,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            return View();
+            return View(categoryFromDb);
         }
-
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePOST(int? id)
         {

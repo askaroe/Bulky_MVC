@@ -1,48 +1,56 @@
-﻿using Bulky.Models;
+﻿using BulkyBook.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bulky.DataAccess.Data
+namespace BulkyBook.DataAcess.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser> 
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
         {
-            
+
         }
 
-        public DbSet<Category> Categories { get; set; } // creating a table with name Categories
-        public DbSet<Product> Products { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products{ get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
-
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Category>().HasData(
+
+			base.OnModelCreating(modelBuilder);
+
+			modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Action", DisplayOrder = 1 },
                 new Category { Id = 2, Name = "SciFi", DisplayOrder = 2 },
                 new Category { Id = 3, Name = "History", DisplayOrder = 3 }
                 );
 
             modelBuilder.Entity<Company>().HasData(
-                new Company { Id = 1, Name = "Tech Solution", StreetAdress = "123 Tech St.", City = "Tech City", 
-                    PostalCode = "121121", State = "IL", PhoneNumber = "11111111111"},
-                new Company { Id = 2, Name = "Vivid Books", StreetAdress = "123 Vid St.", City = "Vid City", 
-                    PostalCode = "123123", State = "IL", PhoneNumber = "111111112222"},
-                new Company
-                {
+                new Company { Id = 1, Name = "Tech Solution", StreetAdress="123 Tech St", City="Tech City",
+                                PostalCode="12121", State="IL", PhoneNumber="6669990000"},
+                new Company {
+                    Id = 2,
+                    Name = "Vivid Books",
+                    StreetAdress = "999 Vid St",
+                    City = "Vid City",
+                    PostalCode = "66666",
+                    State = "IL",
+                    PhoneNumber = "7779990000"
+                },
+                new Company {
                     Id = 3,
                     Name = "Readers Club",
-                    StreetAdress = "123 Lib St.",
-                    City = "Lib City",
-                    PostalCode = "124124",
-                    State = "IL",
-                    PhoneNumber = "1111111133333"
+                    StreetAdress = "999 Main St",
+                    City = "Lala land",
+                    PostalCode = "99999",
+                    State = "NY",
+                    PhoneNumber = "1113335555"
                 }
                 );
+
 
             modelBuilder.Entity<Product>().HasData(
                 new Product
@@ -57,7 +65,7 @@ namespace Bulky.DataAccess.Data
                     Price50 = 85,
                     Price100 = 80,
                     CategoryId = 1,
-                    ImageUrl = ""
+                    ImageUrl=""
                 },
                 new Product
                 {
@@ -126,7 +134,7 @@ namespace Bulky.DataAccess.Data
                     Price = 23,
                     Price50 = 22,
                     Price100 = 20,
-                    CategoryId = 2,
+                    CategoryId = 3,
                     ImageUrl = ""
                 }
                 );

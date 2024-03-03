@@ -1,6 +1,7 @@
 ﻿@page
 @model RegisterModel
 
+
 <div class="card shadow border-0 mt-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-4">
         <div class="row">
@@ -40,9 +41,10 @@
                         <label asp-for="Input.ConfirmPassword" class="ms-2 text-muted">Confirm Password</label>
                         <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                     </div>
+                   
                     <div class="form-floating mb-3 col-md-6">
-                        <input asp-for="Input.StreetAdress" class="form-control" placeholder="name@example.com" />
-                        <label asp-for="Input.StreetAdress" class="ms-2 text-muted">StreetAdress</label>
+                        <input asp-for="Input.StreetAdress" class="form-control"  placeholder="name@example.com" />
+                        <label asp-for="Input.StreetAdress" class="ms-2 text-muted">Street Address</label>
                         <span asp-validation-for="Input.StreetAdress" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-3 col-md-6">
@@ -72,7 +74,7 @@
                         </select>
                     </div>
                     <div class="col-12">
-                        <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+                    <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
                     </div>
                 </form>
             </div>
@@ -80,30 +82,28 @@
                 <section>
                     <p class="divider-text d-flex pt-3">or</p>
                     <h3>Use another service to register.</h3>
+                    
                     @{
-                        if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                        {
+                        if ((Model.ExternalLogins?.Count ?? 0) == 0) {
+                            <div>
+                                <p>
+                                    There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
+                                        article
+                                        about setting up this ASP.NET application to support logging in via external services
+                                    </a>.
+                                </p>
+                            </div>
+                        }
+                        else {
+                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
                                 <div>
                                     <p>
-                                        There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
-                                            article
-                                            about setting up this ASP.NET application to support logging in via external services
-                                        </a>.
+                                        @foreach (var provider in Model.ExternalLogins!) {
+                                            <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                        }
                                     </p>
                                 </div>
-                        }
-                        else
-                        {
-                                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                                    <div>
-                                        <p>
-                                            @foreach (var provider in Model.ExternalLogins!)
-                                        {
-                                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                        }
-                                        </p>
-                                    </div>
-                                </form>
+                            </form>
                         }
                     }
                 </section>
@@ -113,13 +113,14 @@
 </div>
 
 
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        $(document).ready(function (){
+        $(document).ready(function () {
             $('#Input_Role').change(function(){
                 var selection = $('#Input_Role Option:Selected').text();
-                if (selection == 'Company') {
+                if(selection=='Company'){
                     $('#Input_CompanyId').show();
                 }
                 else{

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace Bulky.Models
+namespace BulkyBook.Models
 {
     public class Product
     {
@@ -18,7 +18,7 @@ namespace Bulky.Models
         public string Title { get; set; }
         public string Description { get; set; }
         [Required]
-        public string ISBN {  get; set; }
+        public string ISBN { get; set; }
         [Required]
         public string Author { get; set; }
         [Required]
@@ -27,12 +27,13 @@ namespace Bulky.Models
         public double ListPrice { get; set; }
 
         [Required]
-        [Display(Name = "List Price")]
+        [Display(Name = "Price for 1-50")]
         [Range(1, 1000)]
         public double Price { get; set; }
 
+
         [Required]
-        [Display(Name = "Price for 1-50")]
+        [Display(Name = "Price for 50+")]
         [Range(1, 1000)]
         public double Price50 { get; set; }
 
@@ -46,6 +47,6 @@ namespace Bulky.Models
         [ValidateNever]
         public Category Category { get; set; }
         [ValidateNever]
-        public string ImageUrl { get; set; }
+        public string ImageUrl{ get; set; } 
     }
 }
