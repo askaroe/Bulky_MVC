@@ -1,44 +1,20 @@
-﻿using BulkyBook.DataAccess.Repository.IRepository;
-using BulkyBook.DataAcess.Data;
-using BulkyBook.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Bulky.DataAccess.Data;
+using Bulky.DataAccess.Repository.IRepository;
+using Bulky.Models;
 
-namespace BulkyBook.DataAccess.Repository
+namespace Bulky.DataAccess.Repository
 {
     public class ProductRepository : Repository<Product>, IProductRepository
     {
-        private ApplicationDbContext _db;
-        public ProductRepository(ApplicationDbContext db) : base(db)
+        private ApplicationDbContext _dbContext;
+        public ProductRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _db = db;
+            _dbContext = dbContext;
         }
 
-        
-
-        public void Update(Product obj)
+        public void Update(Product product)
         {
-            var objFromDb = _db.Products.FirstOrDefault(u => u.Id == obj.Id);
-            if (objFromDb != null)
-            {
-                objFromDb.Title = obj.Title;
-                objFromDb.ISBN = obj.ISBN;
-                objFromDb.Price = obj.Price;
-                objFromDb.Price50 = obj.Price50;
-                objFromDb.ListPrice = obj.ListPrice;
-                objFromDb.Price100 = obj.Price100;
-                objFromDb.Description = obj.Description;
-                objFromDb.CategoryId = obj.CategoryId;
-                objFromDb.Author = obj.Author;
-                if (obj.ImageUrl != null)
-                {
-                    objFromDb.ImageUrl = obj.ImageUrl;
-                }
-            }
+            _dbContext.Products.Update(product);
         }
     }
 }

@@ -1,34 +1,29 @@
-﻿using BulkyBook.DataAccess.Repository.IRepository;
-using BulkyBook.DataAcess.Data;
+﻿using Bulky.DataAccess.Data;
+using Bulky.DataAccess.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BulkyBook.DataAccess.Repository
+namespace Bulky.DataAccess.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private ApplicationDbContext _db;
+        private ApplicationDbContext _dbContext;
         public ICategoryRepository Category { get; private set; }
-        public ICompanyRepository Company { get; private set; }
         public IProductRepository Product { get; private set; }
-        public IShoppingCartRepository ShoppingCart { get; private set; }  
-        public IApplicationUserRepository ApplicationUser { get; private set; }
-        public UnitOfWork(ApplicationDbContext db)
+        public UnitOfWork(ApplicationDbContext dbContext)
         {
-            _db = db;
-            ApplicationUser = new ApplicationUserRepository(_db);
-            ShoppingCart = new ShoppingCartRepository(_db);
-            Category = new CategoryRepository(_db);
-            Product = new ProductRepository(_db);
-            Company = new CompanyRepository(_db);   
+            _dbContext = dbContext;
+            Category = new CategoryRepository(_dbContext);
+            Product = new ProductRepository(_dbContext);
         }
+        
 
         public void Save()
         {
-            _db.SaveChanges();
+            _dbContext.SaveChanges();
         }
     }
 }
