@@ -1,6 +1,6 @@
 ﻿@model List<Product>
 
-<div class="card shadow border-0 mt-4">
+<div class="card shadow border-0 my-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
@@ -34,11 +34,14 @@
                     <th>
                         Author
                     </th>
+                    <th>
+                        Category
+                    </th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.OrderBy(u => u.Id))
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td>
@@ -52,6 +55,9 @@
                         </td>
                         <td>
                             @item.Author
+                        </td>
+                        <td>
+                            
                         </td>
                         <td>
                             <div class="w-75 btn-group" role="group">
