@@ -1,5 +1,6 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Bulky.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -17,33 +18,45 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
             List<Product> products = _unitOfWork.Product.GetAll().ToList();
-            
+
             return View(products);
         }
 
         public IActionResult Create()
         {
-            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+            ProductVM productVM = new()
             {
-                Text = u.Name,
-                Value = u.Id.ToString()
-            });
-
-            ViewBag.CategoryList = CategoryList;
-            return View();
+                CategoryList = _unitOfWork.Category
+                    .GetAll().Select(u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString()
+                    }),
+                Product = new Product()
+            };
+            return View(productVM);
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Create(ProductVM productVM)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(product);
+                _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Save();
                 TempData["success"] = "Product created successfully";
                 return RedirectToAction("Index");
             }
-            return View();
+            else
+            {
+                productVM.CategoryList = _unitOfWork.Category
+                    .GetAll().Select(u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString()
+                    });
+                return View(productVM);
+            }
         }
 
         public IActionResult Edit(int? id)
@@ -64,8 +77,9 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Product product) { 
-            if(ModelState.IsValid)
+        public IActionResult Edit(Product product)
+        {
+            if (ModelState.IsValid)
             {
                 _unitOfWork.Product.Update(product);
                 _unitOfWork.Save();
@@ -78,14 +92,14 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
         public IActionResult Delete(int? id)
         {
-            if(id == null || id == 0)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
 
             Product? productFromDb = _unitOfWork.Product.Get(u => u.Id == id);
 
-            if(productFromDb == null)
+            if (productFromDb == null)
             {
                 return NotFound();
             }
@@ -97,7 +111,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult DeletePOST(int? id)
         {
             Product? product = _unitOfWork.Product.Get(u => u.Id == id);
-            
+
             if (product == null)
             {
                 return NotFound();
