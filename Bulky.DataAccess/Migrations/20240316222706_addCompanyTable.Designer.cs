@@ -3,17 +3,20 @@ using System;
 using Bulky.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BulkyWeb.Migrations
+namespace Bulky.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240316222706_addCompanyTable")]
+    partial class addCompanyTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,38 +96,6 @@ namespace BulkyWeb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            City = "Vid City",
-                            Name = "Vivid books",
-                            PhoneNumber = "010101010101",
-                            PostalCode = "123123",
-                            State = "IL",
-                            StreetAdress = "999 Vid St"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            City = "Tech City",
-                            Name = "Tech Solution",
-                            PhoneNumber = "987456321",
-                            PostalCode = "025124",
-                            State = "IL",
-                            StreetAdress = "123 Tech St"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            City = "Lala Land",
-                            Name = "Readers Club",
-                            PhoneNumber = "123456789",
-                            PostalCode = "9999",
-                            State = "IL",
-                            StreetAdress = "123 Lala St"
-                        });
                 });
 
             modelBuilder.Entity("Bulky.Models.Product", b =>
