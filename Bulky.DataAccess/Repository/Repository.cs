@@ -2,6 +2,7 @@
 using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Bulky.DataAccess.Repository
 {
@@ -21,9 +22,19 @@ namespace Bulky.DataAccess.Repository
             dbSet.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query;
+            if (tracked)
+            {
+                query = dbSet;
+                
+            }
+            else
+            {
+                query = dbSet.AsNoTracking();
+                
+            }
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var includeProp in includeProperties
@@ -34,6 +45,7 @@ namespace Bulky.DataAccess.Repository
             }
             query = query.Where(filter);
             return query.FirstOrDefault();
+
         }
 
         public IEnumerable<T> GetAll(string? includeProperties = null)
