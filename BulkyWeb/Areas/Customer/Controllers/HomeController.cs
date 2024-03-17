@@ -45,7 +45,22 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             shoppingCart.ApplicationUserId = userId;
 
-            _unitOfWork.ShoppingCart.Add(shoppingCart);
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && 
+                u.ProductId == shoppingCart.ProductId);
+
+            if(cartFromDb != null)
+            {
+                //shopping cart is already exists 
+                cartFromDb.Count += shoppingCart.Count;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+            else
+            {
+                //adding cart to the repository
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
+            }
+
+            
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
