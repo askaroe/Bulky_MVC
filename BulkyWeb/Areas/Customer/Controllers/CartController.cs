@@ -86,7 +86,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
             ShoppingCartVM.OrderHeader.ApplicationUserId = userId;
 
 
-			ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+			ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
 
 			foreach (var cart in ShoppingCartVM.ShoppingCartList)
 			{
@@ -94,7 +94,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 				ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
 			}
 
-            int? companyId = ShoppingCartVM.OrderHeader.ApplicationUser.CompanyId;
+            int? companyId = applicationUser.CompanyId;
 
 			if (companyId.GetValueOrDefault() == 0)
             {
@@ -126,8 +126,19 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 _unitOfWork.Save();
             }
 
-			return View(ShoppingCartVM);
+			if (companyId.GetValueOrDefault() == 0)
+			{
+				//regular user
+				//stripe logic
+			}
+
+			return RedirectToAction(nameof(OrderConfirmation), new {id=ShoppingCartVM.OrderHeader.Id});
 		}
+
+        public IActionResult OrderConfirmation(int id)
+        {
+            return View(id);
+        }
 
 
 		public IActionResult Plus(int cartId)
