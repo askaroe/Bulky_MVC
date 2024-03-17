@@ -4,7 +4,7 @@ using Bulky.Models;
 
 namespace Bulky.DataAccess.Repository
 {
-    public class ShoppingCartRepository : Repository<ShoppingCart>, IShoppingCart
+    public class ShoppingCartRepository : Repository<ShoppingCart>, IShoppingCartRepository
     {
         private ApplicationDbContext _dbContext;
         public ShoppingCartRepository(ApplicationDbContext dbContext) : base(dbContext)
